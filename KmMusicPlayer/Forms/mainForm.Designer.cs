@@ -51,25 +51,27 @@ namespace KmMusicPlayer.Forms
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.tabControl1 = new System.Windows.Forms.TabControl();
+            this.addSongsMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.addPlayListMenu = new System.Windows.Forms.ToolStripMenuItem();
+            this.openFoldMenu = new System.Windows.Forms.ToolStripMenuItem();
+            this.openListMenu = new System.Windows.Forms.ToolStripMenuItem();
+            this.getNetSongMenu = new System.Windows.Forms.ToolStripMenuItem();
+            this.delSongsMenu = new System.Windows.Forms.ToolStripMenuItem();
+            this.cleanListMenu = new System.Windows.Forms.ToolStripMenuItem();
+            this.saveListMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.listPlaySongs = new System.Windows.Forms.ListView();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.addSongsMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.openFoldMenu = new System.Windows.Forms.ToolStripMenuItem();
-            this.openListMenu = new System.Windows.Forms.ToolStripMenuItem();
-            this.delSongsMenu = new System.Windows.Forms.ToolStripMenuItem();
-            this.cleanListMenu = new System.Windows.Forms.ToolStripMenuItem();
-            this.saveListMenu = new System.Windows.Forms.ToolStripMenuItem();
-            this.tabPage2 = new System.Windows.Forms.TabPage();
-            this.listAllSongs = new System.Windows.Forms.ListView();
-            this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.playeMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.playingDelMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.playingCleanMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.playingSaveMenu = new System.Windows.Forms.ToolStripMenuItem();
-            this.addPlayListMenu = new System.Windows.Forms.ToolStripMenuItem();
+            this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.listAllSongs = new System.Windows.Forms.ListView();
+            this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.netSongInfo = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.playStop)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.btn_volume)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.modeRandom)).BeginInit();
@@ -83,10 +85,10 @@ namespace KmMusicPlayer.Forms
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.tabControl1.SuspendLayout();
-            this.tabPage1.SuspendLayout();
             this.addSongsMenu.SuspendLayout();
-            this.tabPage2.SuspendLayout();
+            this.tabPage1.SuspendLayout();
             this.playeMenu.SuspendLayout();
+            this.tabPage2.SuspendLayout();
             this.SuspendLayout();
             // 
             // playStop
@@ -228,7 +230,7 @@ namespace KmMusicPlayer.Forms
             this.endTime.ForeColor = System.Drawing.Color.White;
             this.endTime.Location = new System.Drawing.Point(379, 63);
             this.endTime.Name = "endTime";
-            this.endTime.Size = new System.Drawing.Size(47, 15);
+            this.endTime.Size = new System.Drawing.Size(35, 12);
             this.endTime.TabIndex = 5;
             this.endTime.Text = "00:00";
             // 
@@ -238,7 +240,7 @@ namespace KmMusicPlayer.Forms
             this.starTime.ForeColor = System.Drawing.Color.White;
             this.starTime.Location = new System.Drawing.Point(195, 63);
             this.starTime.Name = "starTime";
-            this.starTime.Size = new System.Drawing.Size(47, 15);
+            this.starTime.Size = new System.Drawing.Size(35, 12);
             this.starTime.TabIndex = 4;
             this.starTime.Text = "00:00";
             // 
@@ -276,7 +278,7 @@ namespace KmMusicPlayer.Forms
             this.songName.AutoSize = true;
             this.songName.Location = new System.Drawing.Point(193, 31);
             this.songName.Name = "songName";
-            this.songName.Size = new System.Drawing.Size(0, 15);
+            this.songName.Size = new System.Drawing.Size(0, 12);
             this.songName.TabIndex = 13;
             // 
             // groupBox1
@@ -328,13 +330,77 @@ namespace KmMusicPlayer.Forms
             this.tabControl1.Size = new System.Drawing.Size(439, 263);
             this.tabControl1.TabIndex = 1;
             // 
+            // addSongsMenu
+            // 
+            this.addSongsMenu.ImageScalingSize = new System.Drawing.Size(20, 20);
+            this.addSongsMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.addPlayListMenu,
+            this.openFoldMenu,
+            this.openListMenu,
+            this.getNetSongMenu,
+            this.delSongsMenu,
+            this.cleanListMenu,
+            this.saveListMenu});
+            this.addSongsMenu.Name = "addSongsMenu";
+            this.addSongsMenu.Size = new System.Drawing.Size(185, 158);
+            // 
+            // addPlayListMenu
+            // 
+            this.addPlayListMenu.Name = "addPlayListMenu";
+            this.addPlayListMenu.Size = new System.Drawing.Size(184, 22);
+            this.addPlayListMenu.Text = "添加到播放列表";
+            this.addPlayListMenu.Click += new System.EventHandler(this.addPlayListMenu_Click);
+            // 
+            // openFoldMenu
+            // 
+            this.openFoldMenu.Name = "openFoldMenu";
+            this.openFoldMenu.Size = new System.Drawing.Size(184, 22);
+            this.openFoldMenu.Text = "扫描文件夹添加歌曲";
+            this.openFoldMenu.Click += new System.EventHandler(this.openFoldMenu_Click);
+            // 
+            // openListMenu
+            // 
+            this.openListMenu.Name = "openListMenu";
+            this.openListMenu.Size = new System.Drawing.Size(184, 22);
+            this.openListMenu.Text = "加载歌曲清单";
+            this.openListMenu.Click += new System.EventHandler(this.openListMenu_Click);
+            // 
+            // getNetSongMenu
+            // 
+            this.getNetSongMenu.Name = "getNetSongMenu";
+            this.getNetSongMenu.Size = new System.Drawing.Size(184, 22);
+            this.getNetSongMenu.Text = "获取网络歌曲";
+            this.getNetSongMenu.Click += new System.EventHandler(this.getNetSongMenu_Click);
+            // 
+            // delSongsMenu
+            // 
+            this.delSongsMenu.Name = "delSongsMenu";
+            this.delSongsMenu.Size = new System.Drawing.Size(184, 22);
+            this.delSongsMenu.Text = "删除选中歌曲";
+            this.delSongsMenu.Click += new System.EventHandler(this.delSongsMenu_Click);
+            // 
+            // cleanListMenu
+            // 
+            this.cleanListMenu.Name = "cleanListMenu";
+            this.cleanListMenu.Size = new System.Drawing.Size(184, 22);
+            this.cleanListMenu.Text = "清空歌曲列表";
+            this.cleanListMenu.Click += new System.EventHandler(this.cleanListMenu_Click);
+            // 
+            // saveListMenu
+            // 
+            this.saveListMenu.Name = "saveListMenu";
+            this.saveListMenu.Size = new System.Drawing.Size(184, 22);
+            this.saveListMenu.Text = "保存歌曲清单";
+            this.saveListMenu.Click += new System.EventHandler(this.saveListMenu_Click);
+            // 
             // tabPage1
             // 
+            this.tabPage1.Controls.Add(this.netSongInfo);
             this.tabPage1.Controls.Add(this.listPlaySongs);
-            this.tabPage1.Location = new System.Drawing.Point(4, 25);
+            this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(431, 234);
+            this.tabPage1.Size = new System.Drawing.Size(431, 237);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "播放列表";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -352,7 +418,7 @@ namespace KmMusicPlayer.Forms
             this.listPlaySongs.Location = new System.Drawing.Point(3, 3);
             this.listPlaySongs.MultiSelect = false;
             this.listPlaySongs.Name = "listPlaySongs";
-            this.listPlaySongs.Size = new System.Drawing.Size(425, 228);
+            this.listPlaySongs.Size = new System.Drawing.Size(425, 231);
             this.listPlaySongs.TabIndex = 0;
             this.listPlaySongs.UseCompatibleStateImageBehavior = false;
             this.listPlaySongs.View = System.Windows.Forms.View.Details;
@@ -369,61 +435,44 @@ namespace KmMusicPlayer.Forms
             // 
             this.columnHeader2.Text = "歌曲名";
             // 
-            // addSongsMenu
+            // playeMenu
             // 
-            this.addSongsMenu.ImageScalingSize = new System.Drawing.Size(20, 20);
-            this.addSongsMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.addPlayListMenu,
-            this.openFoldMenu,
-            this.openListMenu,
-            this.delSongsMenu,
-            this.cleanListMenu,
-            this.saveListMenu});
-            this.addSongsMenu.Name = "addSongsMenu";
-            this.addSongsMenu.Size = new System.Drawing.Size(214, 148);
+            this.playeMenu.ImageScalingSize = new System.Drawing.Size(20, 20);
+            this.playeMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.playingDelMenu,
+            this.playingCleanMenu,
+            this.playingSaveMenu});
+            this.playeMenu.Name = "addSongsMenu";
+            this.playeMenu.Size = new System.Drawing.Size(149, 70);
             // 
-            // openFoldMenu
+            // playingDelMenu
             // 
-            this.openFoldMenu.Name = "openFoldMenu";
-            this.openFoldMenu.Size = new System.Drawing.Size(213, 24);
-            this.openFoldMenu.Text = "扫描文件夹添加歌曲";
-            this.openFoldMenu.Click += new System.EventHandler(this.openFoldMenu_Click);
+            this.playingDelMenu.Name = "playingDelMenu";
+            this.playingDelMenu.Size = new System.Drawing.Size(148, 22);
+            this.playingDelMenu.Text = "删除选中歌曲";
+            this.playingDelMenu.Click += new System.EventHandler(this.playingDelMenu_Click);
             // 
-            // openListMenu
+            // playingCleanMenu
             // 
-            this.openListMenu.Name = "openListMenu";
-            this.openListMenu.Size = new System.Drawing.Size(213, 24);
-            this.openListMenu.Text = "加载歌曲清单";
-            this.openListMenu.Click += new System.EventHandler(this.openListMenu_Click);
+            this.playingCleanMenu.Name = "playingCleanMenu";
+            this.playingCleanMenu.Size = new System.Drawing.Size(148, 22);
+            this.playingCleanMenu.Text = "清空播放列表";
+            this.playingCleanMenu.Click += new System.EventHandler(this.playingCleanMenu_Click);
             // 
-            // delSongsMenu
+            // playingSaveMenu
             // 
-            this.delSongsMenu.Name = "delSongsMenu";
-            this.delSongsMenu.Size = new System.Drawing.Size(213, 24);
-            this.delSongsMenu.Text = "删除选中歌曲";
-            this.delSongsMenu.Click += new System.EventHandler(this.delSongsMenu_Click);
-            // 
-            // cleanListMenu
-            // 
-            this.cleanListMenu.Name = "cleanListMenu";
-            this.cleanListMenu.Size = new System.Drawing.Size(213, 24);
-            this.cleanListMenu.Text = "清空歌曲列表";
-            this.cleanListMenu.Click += new System.EventHandler(this.cleanListMenu_Click);
-            // 
-            // saveListMenu
-            // 
-            this.saveListMenu.Name = "saveListMenu";
-            this.saveListMenu.Size = new System.Drawing.Size(213, 24);
-            this.saveListMenu.Text = "保存歌曲清单";
-            this.saveListMenu.Click += new System.EventHandler(this.saveListMenu_Click);
+            this.playingSaveMenu.Name = "playingSaveMenu";
+            this.playingSaveMenu.Size = new System.Drawing.Size(148, 22);
+            this.playingSaveMenu.Text = "保存歌曲清单";
+            this.playingSaveMenu.Click += new System.EventHandler(this.playingSaveMenu_Click);
             // 
             // tabPage2
             // 
             this.tabPage2.Controls.Add(this.listAllSongs);
-            this.tabPage2.Location = new System.Drawing.Point(4, 25);
+            this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(431, 234);
+            this.tabPage2.Size = new System.Drawing.Size(431, 237);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "所有歌曲";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -440,7 +489,7 @@ namespace KmMusicPlayer.Forms
             this.listAllSongs.HideSelection = false;
             this.listAllSongs.Location = new System.Drawing.Point(3, 3);
             this.listAllSongs.Name = "listAllSongs";
-            this.listAllSongs.Size = new System.Drawing.Size(425, 228);
+            this.listAllSongs.Size = new System.Drawing.Size(425, 231);
             this.listAllSongs.TabIndex = 1;
             this.listAllSongs.UseCompatibleStateImageBehavior = false;
             this.listAllSongs.View = System.Windows.Forms.View.Details;
@@ -454,43 +503,13 @@ namespace KmMusicPlayer.Forms
             // 
             this.columnHeader4.Text = "歌曲名";
             // 
-            // playeMenu
+            // netSongInfo
             // 
-            this.playeMenu.ImageScalingSize = new System.Drawing.Size(20, 20);
-            this.playeMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.playingDelMenu,
-            this.playingCleanMenu,
-            this.playingSaveMenu});
-            this.playeMenu.Name = "addSongsMenu";
-            this.playeMenu.Size = new System.Drawing.Size(169, 76);
-            // 
-            // playingDelMenu
-            // 
-            this.playingDelMenu.Name = "playingDelMenu";
-            this.playingDelMenu.Size = new System.Drawing.Size(168, 24);
-            this.playingDelMenu.Text = "删除选中歌曲";
-            this.playingDelMenu.Click += new System.EventHandler(this.playingDelMenu_Click);
-            // 
-            // playingCleanMenu
-            // 
-            this.playingCleanMenu.Name = "playingCleanMenu";
-            this.playingCleanMenu.Size = new System.Drawing.Size(168, 24);
-            this.playingCleanMenu.Text = "清空播放列表";
-            this.playingCleanMenu.Click += new System.EventHandler(this.playingCleanMenu_Click);
-            // 
-            // playingSaveMenu
-            // 
-            this.playingSaveMenu.Name = "playingSaveMenu";
-            this.playingSaveMenu.Size = new System.Drawing.Size(168, 24);
-            this.playingSaveMenu.Text = "保存歌曲清单";
-            this.playingSaveMenu.Click += new System.EventHandler(this.playingSaveMenu_Click);
-            // 
-            // addPlayListMenu
-            // 
-            this.addPlayListMenu.Name = "addPlayListMenu";
-            this.addPlayListMenu.Size = new System.Drawing.Size(213, 24);
-            this.addPlayListMenu.Text = "添加到播放列表";
-            this.addPlayListMenu.Click += new System.EventHandler(this.addPlayListMenu_Click);
+            this.netSongInfo.AutoSize = true;
+            this.netSongInfo.Location = new System.Drawing.Point(10, 216);
+            this.netSongInfo.Name = "netSongInfo";
+            this.netSongInfo.Size = new System.Drawing.Size(0, 12);
+            this.netSongInfo.TabIndex = 1;
             // 
             // mainForm
             // 
@@ -518,10 +537,11 @@ namespace KmMusicPlayer.Forms
             this.groupBox1.PerformLayout();
             this.groupBox2.ResumeLayout(false);
             this.tabControl1.ResumeLayout(false);
-            this.tabPage1.ResumeLayout(false);
             this.addSongsMenu.ResumeLayout(false);
-            this.tabPage2.ResumeLayout(false);
+            this.tabPage1.ResumeLayout(false);
+            this.tabPage1.PerformLayout();
             this.playeMenu.ResumeLayout(false);
+            this.tabPage2.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -567,5 +587,7 @@ namespace KmMusicPlayer.Forms
         private System.Windows.Forms.ToolStripMenuItem playingCleanMenu;
         private System.Windows.Forms.ToolStripMenuItem playingSaveMenu;
         private System.Windows.Forms.ToolStripMenuItem addPlayListMenu;
+        private System.Windows.Forms.ToolStripMenuItem getNetSongMenu;
+        private System.Windows.Forms.Label netSongInfo;
     }
 }

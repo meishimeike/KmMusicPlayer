@@ -1,22 +1,14 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.IO;
+using System.Net;
+using System.Net.Http;
+using System.Threading;
+using HAP = HtmlAgilityPack;
 
 namespace KmMusicPlayer
 {
-    class SongsLib
-    {
-
-    }
-    class dataConfig
-    {
-        internal static string LocalSongDB = System.Windows.Forms.Application.CommonAppDataPath + "\\local.lst";
-        internal static string NetSongDB = System.Windows.Forms.Application.CommonAppDataPath + "\\net.lst";
-        internal static string SongsUrl = "https://www.9ku.com";
-    }
-
     class SongInfo
     {
         public string id = null;
@@ -34,19 +26,21 @@ namespace KmMusicPlayer
     }
     class GetSongs
     {
-        public delegate void Status(string status);
+        public delegate void Status(bool status,string msg,List<KeyValuePair<string, string>> songs);
         public event Status GetStatus;
-
-        static List<string> ListSong = new List<string>();
+        static List<KeyValuePair<string, string>> ListSong = new List<KeyValuePair<string, string>>();
+        string SongsUrl;
+        internal GetSongs(string songurl)
+        {
+            SongsUrl = songurl;
+        }
         internal void GetNetSongs()
         {
             ListSong.Clear();
             List<KeyValuePair<string, string>> songurllist = new List<KeyValuePair<string, string>>();
             HAP.HtmlDocument HD = new HAP.HtmlDocument();
-            string html = GetContent(dataConfig.SongsUrl);
+            string html = GetContent(SongsUrl);
             HD.LoadHtml(html);
-            //HAP.HtmlWeb HW = new HAP.HtmlWeb();
-            //var HD = HW.Load(dataConfig.SongsUrl);
 
             string[] maths = new string[] { "//a[@class=\"songName\"]", "//a[@class=\"songName \"]" };
             foreach (string math in maths)
@@ -65,7 +59,7 @@ namespace KmMusicPlayer
                     if (songname == "" || songurl == "") continue;
                     int songid = int.Parse(Path.GetFileNameWithoutExtension(songurl));
                     string tpath = ((int)songid / 1000 + 1).ToString();
-                    string song = $"{ dataConfig.SongsUrl}/html/playjs/{tpath}/{songid}.js";
+                    string song = $"{ SongsUrl}/html/playjs/{tpath}/{songid}.js";
                     songurllist.Add(new KeyValuePair<string, string>(songname, song));
                 }
             }
@@ -84,7 +78,7 @@ namespace KmMusicPlayer
                 }
                 if (GetSonginfo.Count < 10)
                 {
-                    GetStatus($"开始获取网络歌曲 <{songurllist[pointer].Key}>");
+                    GetStatus(false,$"开始获取网络歌曲 <{songurllist[pointer].Key}>",null);
                     Thread GetSong = new Thread(() => SaveSongs(songurllist[pointer].Value));
                     GetSonginfo.Add(GetSong);
                     GetSong.Start();
@@ -93,9 +87,8 @@ namespace KmMusicPlayer
                 Thread.Sleep(100);
             }
             if (ListSong == null) return;
-            if (File.Exists(dataConfig.NetSongDB)) File.Delete(dataConfig.NetSongDB);
-            File.WriteAllLines(dataConfig.NetSongDB, ListSong.ToArray());
-            GetStatus("获取网络歌曲完成");
+            
+            GetStatus(true,"获取网络歌曲完成", ListSong);
         }
 
         private void SaveSongs(string songurl)
@@ -105,7 +98,7 @@ namespace KmMusicPlayer
             jsonStr = jsonStr.Replace("(", "");
             jsonStr = jsonStr.Replace(")", "");
             SongInfo LSI = JsonUtil.JsonToObjList(jsonStr);
-            ListSong.Add($"{LSI.mname}|{LSI.wma}");
+            ListSong.Add(new KeyValuePair<string, string>(LSI.mname,LSI.wma));
         }
         private string GetContent(string url)
         {

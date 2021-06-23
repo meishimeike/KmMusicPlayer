@@ -10,10 +10,11 @@ namespace KmMusicPlayer.Forms
 {
     public partial class mainForm : Form
     {
-        MediaPlayer mediaPlayer = new MediaPlayer();
         string songListPath = Application.UserAppDataPath + "\\songs.ls";
         string songPlayPath = Application.UserAppDataPath + "\\play.ls";
 
+        MediaPlayer mediaPlayer = new MediaPlayer();
+        
         bool isChangeSongList = false;
         bool isChangePlayList = false;
 
@@ -499,6 +500,41 @@ namespace KmMusicPlayer.Forms
                 isChangePlayList = true;
                 MessageBox.Show("添加到播放列表成功！", "成功", MessageBoxButtons.OK, MessageBoxIcon.Information); 
             }          
+        }
+
+        private void getNetSongMenu_Click(object sender, EventArgs e)
+        {
+            GetSongs getSongs = new GetSongs("https://www.9ku.com");
+            getSongs.GetStatus += GetSongs_GetStatus;
+            System.Threading.Thread getSongThread = new System.Threading.Thread(getSongs.GetNetSongs);
+            getSongThread.Start();
+        }
+
+        private void GetSongs_GetStatus(bool status, string msg, List<KeyValuePair<string,string>> songs)
+        {
+            if (status)
+            {
+                if (songs == null) return;
+                AddSongs(1, songs, true);
+                setInfo("");
+            }else
+            {
+                setInfo(msg);
+            }
+        }
+        private void setInfo(string msg)
+        {
+            if (netSongInfo.InvokeRequired)
+            {
+                Invoke(new Action(() =>
+                {
+                    netSongInfo.Text = msg;
+                }));
+            }
+            else
+            {
+                netSongInfo.Text = msg;
+            }
         }
     }
 
