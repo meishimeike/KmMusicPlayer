@@ -10,8 +10,8 @@ namespace KmMusicPlayer.Forms
 {
     public partial class mainForm : Form
     {
-        string songListPath = Application.UserAppDataPath + "\\songs.ls";
-        string songPlayPath = Application.UserAppDataPath + "\\play.ls";
+        string songListPath = Environment.CurrentDirectory + "\\songs.ls";
+        string songPlayPath = Environment.CurrentDirectory + "\\play.ls";
 
         MediaPlayer mediaPlayer = new MediaPlayer();
         
@@ -22,6 +22,7 @@ namespace KmMusicPlayer.Forms
         int playModel = 1;
         int playIndex = 0;
 
+        //LrcForm lrcForm = new LrcForm();
         public mainForm()
         {
             InitializeComponent();
@@ -39,6 +40,12 @@ namespace KmMusicPlayer.Forms
 
             if (File.Exists(songListPath))
                 AddSongs(1,GetListSongs(songListPath),false);
+
+            //歌词显示
+            //lrcForm.Height = this.Height;
+            //lrcForm.Left = this.Left + this.Width - 13;
+            //lrcForm.Top = this.Top;
+            //lrcForm.Show();
         }
 
         private void PlayList_playSong(int index,string songname, string songurl)
@@ -230,6 +237,10 @@ namespace KmMusicPlayer.Forms
             listAllSongs.Columns[0].Width = (int)(listAllSongs.Width * 0.2);
             listAllSongs.Columns[1].Width = (int)(listAllSongs.Width * 0.75);
 
+            //歌词显示
+            //lrcForm.Height = this.Height;
+            //lrcForm.Left = this.Left + this.Width - 13;
+            //lrcForm.Top = this.Top;
         }
 
         private void openFoldMenu_Click(object sender, EventArgs e)
@@ -254,10 +265,12 @@ namespace KmMusicPlayer.Forms
         private void AddSongs(int listType, List<KeyValuePair<string, string>> songs, bool isSave = true)
         {
             if (songs == null) return;
-            foreach (KeyValuePair<string, string> song in songs)
-            {             
+            for (int i=0; i< songs.Count;i++)
+            {
+                KeyValuePair<string, string> song = songs[i];
                 if (listType == 0)
                 {
+
                     ListViewItem viewItem = new ListViewItem(new string[] { (listPlaySongs.Items.Count + 1).ToString(), song.Key });
                     viewItem.Tag = song.Value;
                     listPlaySongs.Items.Add(viewItem);
@@ -268,10 +281,21 @@ namespace KmMusicPlayer.Forms
                 {
                     ListViewItem viewItem = new ListViewItem(new string[] { (listAllSongs.Items.Count + 1).ToString(), song.Key });
                     viewItem.Tag = song.Value;
-                    listAllSongs.Items.Add(viewItem);
+                    if (listAllSongs.InvokeRequired)
+                    {
+                        Invoke(new Action(() =>
+                        {
+                            listAllSongs.Items.Add(viewItem);
+                        }));
+                    }
+                    else
+                    {
+                        listAllSongs.Items.Add(viewItem);
+                    }
                     isChangeSongList = isSave;
-                }                  
+                }               
             }
+
             
         }
 
@@ -535,6 +559,13 @@ namespace KmMusicPlayer.Forms
             {
                 netSongInfo.Text = msg;
             }
+        }
+
+        private void mainForm_Move(object sender, EventArgs e)
+        {
+            //歌词显示
+            //lrcForm.Left = this.Left + this.Width - 13;
+            //lrcForm.Top = this.Top;
         }
     }
 
