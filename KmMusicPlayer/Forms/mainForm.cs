@@ -12,7 +12,7 @@ namespace KmMusicPlayer.Forms
     {
         string songListPath = Environment.CurrentDirectory + "\\songs.ls";
         string songPlayPath = Environment.CurrentDirectory + "\\play.ls";
-
+        string musicDirectory = "";
         MediaPlayer mediaPlayer = new MediaPlayer();
         
         bool isChangeSongList = false;
@@ -22,7 +22,8 @@ namespace KmMusicPlayer.Forms
         int playModel = 1;
         int playIndex = 0;
 
-        //LrcForm lrcForm = new LrcForm();
+        LrcForm lrcForm = new LrcForm();
+
         public mainForm()
         {
             InitializeComponent();
@@ -41,11 +42,20 @@ namespace KmMusicPlayer.Forms
             if (File.Exists(songListPath))
                 AddSongs(1,GetListSongs(songListPath),false);
 
+            musicDirectory = Environment.GetLogicalDrives().Last() + "Music\\";
+            if (!Directory.Exists(musicDirectory)) Directory.CreateDirectory(musicDirectory);
+
             //歌词显示
-            //lrcForm.Height = this.Height;
-            //lrcForm.Left = this.Left + this.Width - 13;
-            //lrcForm.Top = this.Top;
-            //lrcForm.Show();
+            //lrcForm.ReturnSize += LrcForm_ReturnSize;
+            lrcForm.Height = this.Height;
+            lrcForm.Left = this.Left + this.Width - 13;
+            lrcForm.Top = this.Top;
+            lrcForm.Show();
+        }
+
+        private void LrcForm_ReturnSize(int height)
+        {
+            this.Height = height;
         }
 
         private void PlayList_playSong(int index,string songname, string songurl)
@@ -56,6 +66,16 @@ namespace KmMusicPlayer.Forms
             playPlay.Image = Properties.Resources.trayPause;
             playPlay.Tag = "Playing";
             playIndex = index;
+            string lrcfile = musicDirectory + songname + ".lrc";
+            if (File.Exists(lrcfile))
+                lrcForm.LoadLrc(lrcfile);
+            else
+            {
+                if (Lrc.DownloadLrc(lrcfile))
+                {
+                    lrcForm.LoadLrc(lrcfile);
+                }
+            }
         }
 
         private void playLast_MouseEnter(object sender, EventArgs e)
@@ -151,6 +171,17 @@ namespace KmMusicPlayer.Forms
             {
                 playModelSong(1);
             }
+            if(status[1] == "Playing")
+            {
+                lrcForm.SetShowLrc(ToSecond(status[2]));
+            }
+        }
+        private int ToSecond(string time)
+        {
+            string[] ts = time.Split(':');
+            int m = int.Parse(ts[0]);
+            int s = int.Parse(ts[1]);
+            return m * 60 + s;
         }
 
         private void playPlay_Click(object sender, EventArgs e)
@@ -238,9 +269,9 @@ namespace KmMusicPlayer.Forms
             listAllSongs.Columns[1].Width = (int)(listAllSongs.Width * 0.75);
 
             //歌词显示
-            //lrcForm.Height = this.Height;
-            //lrcForm.Left = this.Left + this.Width - 13;
-            //lrcForm.Top = this.Top;
+            lrcForm.Height = this.Height;
+            lrcForm.Left = this.Left + this.Width - 13;
+            lrcForm.Top = this.Top;
         }
 
         private void openFoldMenu_Click(object sender, EventArgs e)
@@ -481,7 +512,7 @@ namespace KmMusicPlayer.Forms
         {
             if (MessageBox.Show("确认要清空歌曲列表吗？", "清空", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
             {
-                listAllSongs.Items.Clear();
+                listPlaySongs.Items.Clear();
                 isChangePlayList = true;
             }
         }
@@ -564,8 +595,19 @@ namespace KmMusicPlayer.Forms
         private void mainForm_Move(object sender, EventArgs e)
         {
             //歌词显示
-            //lrcForm.Left = this.Left + this.Width - 13;
-            //lrcForm.Top = this.Top;
+            lrcForm.Left = this.Left + this.Width - 13;
+            lrcForm.Top = this.Top;
+        }
+
+        private void listAllSongs_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Control && e.KeyCode == Keys.A)
+            {
+                for (int i = 0; i < listAllSongs.Items.Count; i++)
+                {
+                    listAllSongs.Items[i].Selected = true;
+                }
+            }
         }
     }
 

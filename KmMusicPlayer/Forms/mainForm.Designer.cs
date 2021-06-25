@@ -502,6 +502,7 @@ namespace KmMusicPlayer.Forms
             this.listAllSongs.UseCompatibleStateImageBehavior = false;
             this.listAllSongs.View = System.Windows.Forms.View.Details;
             this.listAllSongs.DoubleClick += new System.EventHandler(this.listAllSongs_DoubleClick);
+            this.listAllSongs.KeyDown += new System.Windows.Forms.KeyEventHandler(this.listAllSongs_KeyDown);
             // 
             // columnHeader3
             // 

@@ -52,7 +52,7 @@ namespace KmMusicPlayer.Classes
             using (FileStream fs = new FileStream(LrcPath, FileMode.Open, FileAccess.Read, FileShare.Read))
             {
                 string line;
-                using (StreamReader sr = new StreamReader(fs, Encoding.Default))
+                using (StreamReader sr = new StreamReader(fs, Encoding.UTF8))
                 {
                     while ((line = sr.ReadLine()) != null)
                     {
@@ -111,6 +111,11 @@ namespace KmMusicPlayer.Classes
         static string SplitInfo(string line)
         {
             return line.Substring(line.IndexOf(":") + 1).TrimEnd(']');
+        }
+
+        public static bool DownloadLrc(string lrcfile)
+        {
+            return false;
         }
     }
 }
