@@ -34,18 +34,18 @@ namespace KmMusicPlayer.Forms
             // 
             // lrcPanl
             // 
-            this.lrcPanl.BackColor = System.Drawing.Color.Black;
+            this.lrcPanl.BackColor = System.Drawing.Color.Gray;
             this.lrcPanl.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lrcPanl.Location = new System.Drawing.Point(0, 0);
             this.lrcPanl.Name = "lrcPanl";
-            this.lrcPanl.Size = new System.Drawing.Size(582, 398);
+            this.lrcPanl.Size = new System.Drawing.Size(382, 398);
             this.lrcPanl.TabIndex = 0;
             // 
             // LrcForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(582, 398);
+            this.ClientSize = new System.Drawing.Size(382, 398);
             this.Controls.Add(this.lrcPanl);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;

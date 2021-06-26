@@ -139,11 +139,11 @@ namespace KmMusicPlayer.Classes
 
         string GetTime(long time)
         {
-            int m, s;
-            float sec = (float)time / 1000;
-            m = (int)(sec / 60);
-            s = (int)(sec % 60);
-            return $"{m:00}:{s:00}";
+            int mi, se, ms;
+            ms = (int)time % 1000;
+            mi = (int)(time / 60000);
+            se = (int)((time - mi * 60000) / 1000);
+            return $"{mi:00}:{se:00}.{ms:000}";
         }
     }
 }

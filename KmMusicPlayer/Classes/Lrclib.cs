@@ -47,6 +47,7 @@ namespace KmMusicPlayer.Classes
         /// <returns>返回歌词信息(Lrc实例)</returns>
         public static Lrc InitLrc(string LrcPath)
         {
+            if (LrcPath == null) return null;
             Lrc lrc = new Lrc();
             Dictionary<double, string> dicword = new Dictionary<double, string>();
             using (FileStream fs = new FileStream(LrcPath, FileMode.Open, FileAccess.Read, FileShare.Read))
@@ -87,7 +88,7 @@ namespace KmMusicPlayer.Classes
                                 MatchCollection mct = regextime.Matches(line);
                                 foreach (Match item in mct)
                                 {
-                                    double time = TimeSpan.Parse("00:" + item.Groups[1].Value).TotalSeconds;
+                                    double time = TimeSpan.Parse("00:" + item.Groups[1].Value).TotalMilliseconds;
                                     dicword.Add(time, word);
                                 }
                             }

@@ -58,7 +58,7 @@ namespace KmMusicPlayer.Forms
             this.getNetSongMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.delSongsMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.cleanListMenu = new System.Windows.Forms.ToolStripMenuItem();
-            this.saveListMenu = new System.Windows.Forms.ToolStripMenuItem();
+            this.saveAllListMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.listPlaySongs = new System.Windows.Forms.ListView();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -72,6 +72,7 @@ namespace KmMusicPlayer.Forms
             this.listAllSongs = new System.Windows.Forms.ListView();
             this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.timerDelay = new System.Windows.Forms.Timer(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.playStop)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.btn_volume)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.modeRandom)).BeginInit();
@@ -340,7 +341,7 @@ namespace KmMusicPlayer.Forms
             this.getNetSongMenu,
             this.delSongsMenu,
             this.cleanListMenu,
-            this.saveListMenu});
+            this.saveAllListMenu});
             this.addSongsMenu.Name = "addSongsMenu";
             this.addSongsMenu.Size = new System.Drawing.Size(214, 172);
             // 
@@ -386,12 +387,12 @@ namespace KmMusicPlayer.Forms
             this.cleanListMenu.Text = "清空歌曲列表";
             this.cleanListMenu.Click += new System.EventHandler(this.cleanListMenu_Click);
             // 
-            // saveListMenu
+            // saveAllListMenu
             // 
-            this.saveListMenu.Name = "saveListMenu";
-            this.saveListMenu.Size = new System.Drawing.Size(213, 24);
-            this.saveListMenu.Text = "保存歌曲清单";
-            this.saveListMenu.Click += new System.EventHandler(this.saveListMenu_Click);
+            this.saveAllListMenu.Name = "saveAllListMenu";
+            this.saveAllListMenu.Size = new System.Drawing.Size(213, 24);
+            this.saveAllListMenu.Text = "保存歌曲清单";
+            this.saveAllListMenu.Click += new System.EventHandler(this.saveAllListMenu_Click);
             // 
             // tabPage1
             // 
@@ -484,6 +485,7 @@ namespace KmMusicPlayer.Forms
             this.netSongInfo.Name = "netSongInfo";
             this.netSongInfo.Size = new System.Drawing.Size(0, 15);
             this.netSongInfo.TabIndex = 2;
+            this.netSongInfo.TextChanged += new System.EventHandler(this.netSongInfo_TextChanged);
             // 
             // listAllSongs
             // 
@@ -511,6 +513,11 @@ namespace KmMusicPlayer.Forms
             // columnHeader4
             // 
             this.columnHeader4.Text = "歌曲名";
+            // 
+            // timerDelay
+            // 
+            this.timerDelay.Interval = 2000;
+            this.timerDelay.Tick += new System.EventHandler(this.timerDelay_Tick);
             // 
             // mainForm
             // 
@@ -575,7 +582,7 @@ namespace KmMusicPlayer.Forms
         private System.Windows.Forms.ContextMenuStrip addSongsMenu;
         private System.Windows.Forms.ToolStripMenuItem openFoldMenu;
         private System.Windows.Forms.ToolStripMenuItem openListMenu;
-        private System.Windows.Forms.ToolStripMenuItem saveListMenu;
+        private System.Windows.Forms.ToolStripMenuItem saveAllListMenu;
         private System.Windows.Forms.ToolStripMenuItem delSongsMenu;
         private System.Windows.Forms.ToolStripMenuItem cleanListMenu;
         private System.Windows.Forms.TabControl tabControl1;
@@ -591,5 +598,6 @@ namespace KmMusicPlayer.Forms
         private System.Windows.Forms.ToolStripMenuItem addPlayListMenu;
         private System.Windows.Forms.ToolStripMenuItem getNetSongMenu;
         private System.Windows.Forms.Label netSongInfo;
+        private System.Windows.Forms.Timer timerDelay;
     }
 }

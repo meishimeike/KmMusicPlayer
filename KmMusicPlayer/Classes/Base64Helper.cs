@@ -15,6 +15,7 @@ namespace KmMusicPlayer
         /// <returns></returns>
         public static string Base64Encrypt(string input)
         {
+            if (string.IsNullOrWhiteSpace(input)) return "";
             return Base64Encrypt(input, new UTF8Encoding());
         }
 
@@ -26,6 +27,7 @@ namespace KmMusicPlayer
         /// <returns></returns>
         public static string Base64Encrypt(string input, Encoding encode)
         {
+            if (string.IsNullOrWhiteSpace(input)) return "";
             return Convert.ToBase64String(encode.GetBytes(input));
         }
 
@@ -36,6 +38,7 @@ namespace KmMusicPlayer
         /// <returns></returns>
         public static string Base64Decrypt(string input)
         {
+            if (string.IsNullOrWhiteSpace(input)) return "";
             return Base64Decrypt(input, new UTF8Encoding());
         }
 
@@ -47,6 +50,7 @@ namespace KmMusicPlayer
         /// <returns></returns>
         public static string Base64Decrypt(string input, Encoding encode)
         {
+            if (string.IsNullOrWhiteSpace(input)) return "";
             return encode.GetString(Convert.FromBase64String(input));
         }
     }

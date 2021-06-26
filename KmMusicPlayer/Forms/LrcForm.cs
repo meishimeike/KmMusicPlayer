@@ -27,8 +27,22 @@ namespace KmMusicPlayer.Forms
 
         }
 
+        public void LoadLrc()
+        {
+            for (int i = 0; i < labels.Count; i++)
+            {
+                labels[i].Text = "";
+            }
+            labels[labels.Count / 2].Text = "暂无歌词";
+            lrc = Classes.Lrc.InitLrc(null);      
+        }
+
         public void LoadLrc(string lrcfile)
         {
+            for (int i = 0; i < labels.Count; i++)
+            {
+                labels[i].Text = "";
+            }
             lrc = Classes.Lrc.InitLrc(lrcfile);
         }
 
@@ -39,17 +53,19 @@ namespace KmMusicPlayer.Forms
             int point = 0;
             for (int i=0; i< lrckeys.Length; i++)
             {
-                if(i< lrckeys.Length-1)
+                if(i< lrckeys.Length-1 )
                 {
                     if (lrckeys[i] < millisecond && millisecond < lrckeys[i + 1])
                     {
                         point = i;
                         break;
-                    }
-                }
-                
+                    }                 
+                }            
             }
-
+            if (millisecond > lrckeys.Last())
+            {
+                point = lrckeys.Length - 1;
+            }
             string[] lrcvalues = lrc.LrcWord.Values.ToArray();
             for(int i=0;i< labels.Count; i++)
             {
@@ -109,5 +125,6 @@ namespace KmMusicPlayer.Forms
                 }
             }
         }
+
     }
 }

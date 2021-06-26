@@ -58,15 +58,16 @@ namespace KmMusicPlayer.Forms
             this.Height = height;
         }
 
-        private void PlayList_playSong(int index,string songname, string songurl)
+        private void PlayList_playSong(int index,Song song)
         {
             stepTime.Enabled = true;
             isAutoPlay = true;
-            mediaPlayer.Play(songname,songurl);
+            mediaPlayer.Play(song.mname, song.wma);
             playPlay.Image = Properties.Resources.trayPause;
             playPlay.Tag = "Playing";
             playIndex = index;
-            string lrcfile = musicDirectory + songname + ".lrc";
+            string lrcfile = musicDirectory + song.mname + ".lrc";
+            if (string.IsNullOrWhiteSpace(song.lrc)) return; else { File.WriteAllText(lrcfile, song.lrc); }
             if (File.Exists(lrcfile))
                 lrcForm.LoadLrc(lrcfile);
             else
@@ -74,6 +75,10 @@ namespace KmMusicPlayer.Forms
                 if (Lrc.DownloadLrc(lrcfile))
                 {
                     lrcForm.LoadLrc(lrcfile);
+                }
+                else
+                {
+                    lrcForm.LoadLrc();
                 }
             }
         }
@@ -164,8 +169,8 @@ namespace KmMusicPlayer.Forms
             List<string> status = mediaPlayer.GetStatues();
 
             songName.Text = status[0];
-            starTime.Text = status[2];
-            endTime.Text = status[3];
+            starTime.Text = status[2].Substring(0,5);
+            endTime.Text = status[3].Substring(0, 5);
             schedule1.Size = new Size((int)((schedule.Width-4) * float.Parse(status[4])), 4);
             if (isAutoPlay && status[1]== "Ended")
             {
@@ -180,8 +185,8 @@ namespace KmMusicPlayer.Forms
         {
             string[] ts = time.Split(':');
             int m = int.Parse(ts[0]);
-            int s = int.Parse(ts[1]);
-            return m * 60 + s;
+            float s = float.Parse(ts[1]) * 1000;
+            return (int)(m * 60000 + s);
         }
 
         private void playPlay_Click(object sender, EventArgs e)
@@ -214,9 +219,8 @@ namespace KmMusicPlayer.Forms
         private void listView1_DoubleClick(object sender, EventArgs e)
         {
             if (listPlaySongs.SelectedItems.Count != 1) return;
-            string songname = listPlaySongs.SelectedItems[0].SubItems[1].Text;
-            string songurl = listPlaySongs.SelectedItems[0].Tag.ToString();
-            PlayList_playSong(listPlaySongs.SelectedItems[0].Index,songname, songurl);
+            int index = listPlaySongs.SelectedItems[0].Index;
+            PlayList_playSong(index, (Song)listPlaySongs.SelectedItems[0].Tag);
            
         }
 
@@ -293,25 +297,24 @@ namespace KmMusicPlayer.Forms
             }
         }
 
-        private void AddSongs(int listType, List<KeyValuePair<string, string>> songs, bool isSave = true)
+        private void AddSongs(int listType, List<Song> songs, bool isSave = true)
         {
             if (songs == null) return;
             for (int i=0; i< songs.Count;i++)
             {
-                KeyValuePair<string, string> song = songs[i];
+                Song song = songs[i];
                 if (listType == 0)
                 {
-
-                    ListViewItem viewItem = new ListViewItem(new string[] { (listPlaySongs.Items.Count + 1).ToString(), song.Key });
-                    viewItem.Tag = song.Value;
+                    ListViewItem viewItem = new ListViewItem(new string[] { (listPlaySongs.Items.Count + 1).ToString(), song.mname });
+                    viewItem.Tag = song;
                     listPlaySongs.Items.Add(viewItem);
                     isChangePlayList = isSave;
                 }
                     
                 if (listType == 1)
                 {
-                    ListViewItem viewItem = new ListViewItem(new string[] { (listAllSongs.Items.Count + 1).ToString(), song.Key });
-                    viewItem.Tag = song.Value;
+                    ListViewItem viewItem = new ListViewItem(new string[] { (listAllSongs.Items.Count + 1).ToString(), song.mname });
+                    viewItem.Tag = song;
                     if (listAllSongs.InvokeRequired)
                     {
                         Invoke(new Action(() =>
@@ -330,23 +333,21 @@ namespace KmMusicPlayer.Forms
             
         }
 
-        private List<KeyValuePair<string, string>> GetListSongs(string path)
+        private List<Song> GetListSongs(string path)
         {
-            List<KeyValuePair<string, string>> songList = new List<KeyValuePair<string, string>>();
+            List<Song> songList = new List<Song>();
             string[] songs = File.ReadAllLines(path);
             if (songs == null) return null;
             foreach(string song in songs)
             {
-                string[] songinfo = song.Split('|');
-                string name = Base64Helper.Base64Decrypt(songinfo[0]);
-                string url = Base64Helper.Base64Decrypt(songinfo[1]);
-                songList.Add(new KeyValuePair<string, string>(Path.GetFileNameWithoutExtension(name), url));
+                Song info = new Song(song);
+                songList.Add(info);
             }
             return songList;
         }
-        private List<KeyValuePair<string,string>> GetFoldSongs(string dir)
+        private List<Song> GetFoldSongs(string dir)
         {
-            List<KeyValuePair<string, string>> songList = new List<KeyValuePair<string, string>>();
+            List<Song> songList = new List<Song>();
             string[] songex = new string[] { ".mp3", ".wav", ".wma", ".flac" };
             if (!Directory.Exists(dir)) return null;
             string[] songs = Directory.GetFiles(dir);
@@ -356,7 +357,10 @@ namespace KmMusicPlayer.Forms
                 string ext = Path.GetExtension(song).ToLower();
                 if (songex.Contains(ext))
                 {
-                    songList.Add(new KeyValuePair<string, string>(Path.GetFileNameWithoutExtension(song),song));
+                    Song info = new Song();
+                    info.mname = Path.GetFileNameWithoutExtension(song);
+                    info.wma = song;
+                    songList.Add(info);
                 }
             }
 
@@ -371,15 +375,15 @@ namespace KmMusicPlayer.Forms
             return songList;
         }
 
-        private void saveListMenu_Click(object sender, EventArgs e)
+        private void saveAllListMenu_Click(object sender, EventArgs e)
         {
-            if (listAllSongs.Items.Count == 0) return;
-            string song = "";
+            List<string> songslist = new List<string>();
             foreach (ListViewItem item in listAllSongs.Items)
             {
-                song += $"{Base64Helper.Base64Encrypt(item.SubItems[1].Text)}|{Base64Helper.Base64Encrypt(item.Tag.ToString())}{Environment.NewLine}";
+                Song song = (Song)item.Tag;
+                songslist.Add(song.ToString());
             }
-            File.WriteAllText(songListPath, song);
+            File.WriteAllLines(songListPath, songslist);
             isChangeSongList = false;
         }
 
@@ -397,7 +401,7 @@ namespace KmMusicPlayer.Forms
             {
                 if (MessageBox.Show("歌曲没有保存，是否保存清单？", "保存", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
                 {
-                    saveListMenu_Click(null, null);
+                    saveAllListMenu_Click(null, null);
                 }
             }
 
@@ -405,7 +409,7 @@ namespace KmMusicPlayer.Forms
 
         private void delSongsMenu_Click(object sender, EventArgs e)
         {
-            if (listPlaySongs.SelectedItems.Count > 0)
+            if (listAllSongs.SelectedItems.Count > 0)
             {
                 if (MessageBox.Show("确认要删除选中歌曲吗？", "删除", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
                 {
@@ -451,16 +455,14 @@ namespace KmMusicPlayer.Forms
                         if (playIndex == listPlaySongs.Items.Count - 1) playIndex = 0; else playIndex += 1;
                     if(type==-1)
                         if (playIndex == 0) playIndex = listPlaySongs.Items.Count - 1; else playIndex -= 1;
-                    string songname1 = listPlaySongs.Items[playIndex].SubItems[1].Text;
-                    string songurl1 = listPlaySongs.Items[playIndex].Tag.ToString();
-                    PlayList_playSong(playIndex,songname1, songurl1);
+                    Song song = (Song)listPlaySongs.Items[playIndex].Tag;
+                    PlayList_playSong(playIndex,song);
                     break;
                 case 2:
                     Random random = new Random();
                     playIndex = random.Next(0, listPlaySongs.Items.Count);
-                    string songname2 = listPlaySongs.Items[playIndex].SubItems[1].Text;
-                    string songurl2 = listPlaySongs.Items[playIndex].Tag.ToString();
-                    PlayList_playSong(playIndex, songname2, songurl2);
+                    Song song2 = (Song)listPlaySongs.Items[playIndex].Tag;
+                    PlayList_playSong(playIndex, song2);
                     break;
                 default:
                     break;
@@ -519,14 +521,14 @@ namespace KmMusicPlayer.Forms
 
         private void playingSaveMenu_Click(object sender, EventArgs e)
         {
-            if (listPlaySongs.Items.Count == 0) return;
-            string song = "";
+            List<string> songslist = new List<string>();
             foreach (ListViewItem item in listPlaySongs.Items)
             {
-                song += $"{Base64Helper.Base64Encrypt(item.SubItems[1].Text)}|{Base64Helper.Base64Encrypt(item.Tag.ToString())}{Environment.NewLine}";
+                Song song = (Song)item.Tag;
+                songslist.Add(song.ToString());
             }
-            File.WriteAllText(songPlayPath, song);
-            isChangePlayList = false;
+            File.WriteAllLines(songPlayPath, songslist);
+            isChangeSongList = false;
         }
 
         private void listAllSongs_DoubleClick(object sender, EventArgs e)
@@ -546,14 +548,13 @@ namespace KmMusicPlayer.Forms
                 foreach(ListViewItem listViewItem in listAllSongs.SelectedItems)
                 {
                     string songName = listViewItem.SubItems[1].Text;
-                    string songUrl = listViewItem.Tag.ToString();
-
                     ListViewItem viewItem = new ListViewItem(new string[] { (listPlaySongs.Items.Count + 1).ToString(), songName });
-                    viewItem.Tag = songUrl;
+                    viewItem.Tag = (Song)listViewItem.Tag;
                     listPlaySongs.Items.Add(viewItem);
+                    netSongInfo.Text = $"<{songName}>已添加到播放列表！";
                 }
                 isChangePlayList = true;
-                MessageBox.Show("添加到播放列表成功！", "成功", MessageBoxButtons.OK, MessageBoxIcon.Information); 
+                
             }          
         }
 
@@ -565,7 +566,7 @@ namespace KmMusicPlayer.Forms
             getSongThread.Start();
         }
 
-        private void GetSongs_GetStatus(bool status, string msg, List<KeyValuePair<string,string>> songs)
+        private void GetSongs_GetStatus(bool status, string msg, List<Song> songs)
         {
             if (status)
             {
@@ -608,6 +609,16 @@ namespace KmMusicPlayer.Forms
                     listAllSongs.Items[i].Selected = true;
                 }
             }
+        }
+
+        private void timerDelay_Tick(object sender, EventArgs e)
+        {
+            netSongInfo.Text = "";
+        }
+
+        private void netSongInfo_TextChanged(object sender, EventArgs e)
+        {
+            timerDelay.Enabled = true;
         }
     }
 
